@@ -1,5 +1,9 @@
 package com.pavoindus.modeltraining.service.impl;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class ModelTrainingServiceImpl implements ModelTrainingService {
 
+    private static final String PATH_TO_DOWNLOAD_DIR = "/pavo-indus/modelFiles";
+
     private static final Log logger = LogFactory.getLog(ModelTrainingServiceImpl.class);
     @Autowired
     private ModelRepository modelRepository;
@@ -44,7 +50,42 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
     public TrainingDataInfo uploadTrainingData(MultipartFile file, String name) {
         TrainingDataInfo trainingDataInfo = new TrainingDataInfo(name, TrainingDataInfo.Status.PROCESSING);
         trainingDataInfoRepository.save(trainingDataInfo);
-        processFile(file, trainingDataInfo);
+        File serverFile = null;
+        if (!file.isEmpty()) {
+            try {
+                byte[] bytes = file.getBytes();
+
+                // Creating the directory to store file
+                File dir = new File(PATH_TO_DOWNLOAD_DIR);
+                if (!dir.exists())
+                    dir.mkdir();
+
+                // Create the file on server
+                serverFile = new File(dir.getAbsolutePath()
+                    + File.separator + trainingDataInfo.getId() + "_" +
+                    trainingDataInfo.getName().replace(' ', '_') +
+                    file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.'),
+                        file.getOriginalFilename().length()));
+                BufferedOutputStream stream = new BufferedOutputStream(
+                    new FileOutputStream(serverFile));
+                stream.write(bytes);
+                stream.close();
+
+                logger.info("Server File Location="
+                    + serverFile.getAbsolutePath());
+
+            } catch (Exception e) {
+                logger.error("Something went wrong while uploading the file");
+            }
+        } else {
+            return null;
+        }
+        if(serverFile == null) {
+            return null;
+        }
+        File serverFileWrapper = serverFile;
+        int runnerPriority = Thread.currentThread().getPriority();
+        new Thread(() -> processFile(serverFileWrapper.getAbsolutePath(), trainingDataInfo, runnerPriority)).start();
         return trainingDataInfo;
     }
 
@@ -77,14 +118,28 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
         return info != null ? trainingDataRepository.findByTrainingDataInfo(info) : null;
     }
 
-    private void processFile(MultipartFile file, TrainingDataInfo info) {
+    private void processFile(String fileAbsPath, TrainingDataInfo info, int mainThreadPriority) {
+        logger.info("Inside processFile");
+        int newPriority = mainThreadPriority - 1 > Thread.MIN_PRIORITY ? mainThreadPriority - 1 : Thread.MIN_PRIORITY;
+        Thread.currentThread().setPriority(newPriority);
+        Thread.yield();
+        try {
+            Thread.sleep(3000L);
+        } catch (Exception e) {
+            logger.error(e);
+        }
         List<TrainingData> records = new ArrayList<>();
         List<String> fileLines;
         StringBuilder sb = new StringBuilder();
         int rowsProcessed = 0;
         boolean hasErrors = false;
         try {
-            String content = new String(file.getBytes());
+            File file = new File(fileAbsPath);
+            FileInputStream fin = new FileInputStream(file);
+            byte[] fileBytes = new byte[(int) file.length()];
+            fin.read(fileBytes);
+            String content = new String(fileBytes);
+            fin.close();
             String splitter = content.contains("\\r\\n") ? "\\r\\n" : "\\n";
             String[] rows = content.split(splitter);
             int index = 1;
@@ -119,9 +174,11 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
             }
             info.setStatus(TrainingDataInfo.Status.ACTIVE);
             info.setInfo(rowsProcessed + " rows processed successfully");
+            logger.info("Data uploaded successfully... Activating Records ID: " + info.getId() );
         } else {
             info.setStatus(TrainingDataInfo.Status.ERROR);
-            info.setInfo(sb.toString().substring(0, 499));
+            info.setInfo(sb.toString().substring(0, sb.toString().length() > 500 ? 499 : sb.toString().length()));
+            logger.error("Failed to upload data... Records ID: " + info.getId() );
         }
         trainingDataInfoRepository.save(info);
     }
