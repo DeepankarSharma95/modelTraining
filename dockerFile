@@ -1,0 +1,9 @@
+FROM openjdk:8u131-jdk-alpine
+
+VOLUME /tmp
+
+ADD target/simple-file-upload-0.0.1-SNAPSHOT.war simple-file-upload.war
+
+ENV JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=28787"
+
+CMD java $JAVA_OPTS -jar /simple-file-upload.war

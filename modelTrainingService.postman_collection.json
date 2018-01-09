@@ -1,0 +1,878 @@
+{
+	"info": {
+		"name": "modelTrainingService",
+		"_postman_id": "64d612a3-f5df-7a0b-977e-dc302027b465",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Train-Upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Payroll-Results-API-Key",
+						"value": "abcdefghijklmno"
+					},
+					{
+						"key": "X-Payroll-Results-Auth-Token",
+						"value": "3fd088a58367a892"
+					},
+					{
+						"key": "X-Payroll-Results-Application",
+						"value": "UI5 Client"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"description": "",
+							"type": "file",
+							"src": "train.csv"
+						},
+						{
+							"key": "name",
+							"value": "Training Data",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/train/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"train",
+						"upload"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Train - Get all training data info",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Payroll-Results-API-Key",
+						"value": "abcdefghijklmno"
+					},
+					{
+						"key": "X-Payroll-Results-Auth-Token",
+						"value": "3fd088a58367a892"
+					},
+					{
+						"key": "X-Payroll-Results-Application",
+						"value": "UI5 Client"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"value": "",
+							"description": "",
+							"type": "file"
+						},
+						{
+							"key": "name",
+							"value": "Sample Data",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/train",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"train"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Train - Get Training Data for ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Payroll-Results-API-Key",
+						"value": "abcdefghijklmno"
+					},
+					{
+						"key": "X-Payroll-Results-Auth-Token",
+						"value": "3fd088a58367a892"
+					},
+					{
+						"key": "X-Payroll-Results-Application",
+						"value": "UI5 Client"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"value": "",
+							"description": "",
+							"type": "file"
+						},
+						{
+							"key": "name",
+							"value": "Sample Data",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/train/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"train",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Model - Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Payroll-Results-API-Key",
+						"value": "abcdefghijklmno"
+					},
+					{
+						"key": "X-Payroll-Results-Auth-Token",
+						"value": "3fd088a58367a892"
+					},
+					{
+						"key": "X-Payroll-Results-Application",
+						"value": "UI5 Client"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Sample Model",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "trainingDataInfoId",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "DT",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt01",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt02",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt03",
+							"value": "3",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt04",
+							"value": "4",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt05",
+							"value": "5",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt06",
+							"value": "6",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt07",
+							"value": "7",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt08",
+							"value": "8",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt09",
+							"value": "9",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt10",
+							"value": "10",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt11",
+							"value": "11",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt12",
+							"value": "12",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt13",
+							"value": "13",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt14",
+							"value": "14",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt15",
+							"value": "15",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt16",
+							"value": "16",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt17",
+							"value": "17",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt18",
+							"value": "18",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt19",
+							"value": "19",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt20",
+							"value": "20",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt21",
+							"value": "21",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt22",
+							"value": "22",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt23",
+							"value": "23",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt24",
+							"value": "24",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt25",
+							"value": "25",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt26",
+							"value": "26",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt27",
+							"value": "27",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt28",
+							"value": "28",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt29",
+							"value": "29",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/model/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"model",
+						"create"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Model - Get All Models",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Payroll-Results-API-Key",
+						"value": "abcdefghijklmno"
+					},
+					{
+						"key": "X-Payroll-Results-Auth-Token",
+						"value": "3fd088a58367a892"
+					},
+					{
+						"key": "X-Payroll-Results-Application",
+						"value": "UI5 Client"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Sample Model",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "trainingDataInfoId",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "DT",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt01",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt02",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt03",
+							"value": "3",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt04",
+							"value": "4",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt05",
+							"value": "5",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt06",
+							"value": "6",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt07",
+							"value": "7",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt08",
+							"value": "8",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt09",
+							"value": "9",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt10",
+							"value": "10",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt11",
+							"value": "11",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt12",
+							"value": "12",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt13",
+							"value": "13",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt14",
+							"value": "14",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt15",
+							"value": "15",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt16",
+							"value": "16",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt17",
+							"value": "17",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt18",
+							"value": "18",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt19",
+							"value": "19",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt20",
+							"value": "20",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt21",
+							"value": "21",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt22",
+							"value": "22",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt23",
+							"value": "23",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt24",
+							"value": "24",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt25",
+							"value": "25",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt26",
+							"value": "26",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt27",
+							"value": "27",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt28",
+							"value": "28",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt29",
+							"value": "29",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/model",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"model"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Model - Get Model By ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Payroll-Results-API-Key",
+						"value": "abcdefghijklmno"
+					},
+					{
+						"key": "X-Payroll-Results-Auth-Token",
+						"value": "3fd088a58367a892"
+					},
+					{
+						"key": "X-Payroll-Results-Application",
+						"value": "UI5 Client"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Sample Model",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "trainingDataInfoId",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "DT",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt01",
+							"value": "1",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt02",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt03",
+							"value": "3",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt04",
+							"value": "4",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt05",
+							"value": "5",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt06",
+							"value": "6",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt07",
+							"value": "7",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt08",
+							"value": "8",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt09",
+							"value": "9",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt10",
+							"value": "10",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt11",
+							"value": "11",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt12",
+							"value": "12",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt13",
+							"value": "13",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt14",
+							"value": "14",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt15",
+							"value": "15",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt16",
+							"value": "16",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt17",
+							"value": "17",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt18",
+							"value": "18",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt19",
+							"value": "19",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt20",
+							"value": "20",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt21",
+							"value": "21",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt22",
+							"value": "22",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt23",
+							"value": "23",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt24",
+							"value": "24",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt25",
+							"value": "25",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt26",
+							"value": "26",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt27",
+							"value": "27",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt28",
+							"value": "28",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "wt29",
+							"value": "29",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/model/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"model",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
