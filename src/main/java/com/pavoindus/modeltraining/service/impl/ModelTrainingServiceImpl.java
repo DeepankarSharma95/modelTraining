@@ -5,10 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.pavoindus.modeltraining.model.Model;
 import com.pavoindus.modeltraining.model.ModelConfig;
@@ -21,8 +18,10 @@ import com.pavoindus.modeltraining.repository.TrainingDataRepository;
 import com.pavoindus.modeltraining.response.Failure;
 import com.pavoindus.modeltraining.service.ModelTrainingService;
 
+import com.pavoindus.modeltraining.service.Producer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -37,6 +36,9 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
     private static final Log logger = LogFactory.getLog(ModelTrainingServiceImpl.class);
     @Autowired
     private ModelRepository modelRepository;
+
+    @Autowired
+    private Producer producer;
 
     @Autowired
     private ModelConfigRepository modelConfigRepository;
@@ -116,6 +118,24 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
     @Override public List<TrainingData> getTrainingDataForInfo(Long id) {
         TrainingDataInfo info = trainingDataInfoRepository.findOne(id);
         return info != null ? trainingDataRepository.findByTrainingDataInfo(info) : null;
+    }
+
+    @Override
+    public void queueModelForTraining(ModelConfig config) {
+        List<TrainingData> trainingData = trainingDataRepository.findByTrainingDataInfo(config.getModel().getTrainingDataInfo());
+        List<Double[]> processedTrainingData = new ArrayList<>();
+        for(TrainingData data : trainingData) {
+            processedTrainingData.add(data.getMultipliedData(config.getWeightsAsArray()));
+        }
+        Object[] processedData = 
+        processedTrainingData.toArray();
+        String data = null;
+        try {
+            data = new ObjectMapper().writeValueAsString(processedData);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        producer.queueData(data);
     }
 
     private void processFile(String fileAbsPath, TrainingDataInfo info, int mainThreadPriority) {

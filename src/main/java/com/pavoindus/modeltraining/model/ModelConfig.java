@@ -352,4 +352,18 @@ public class ModelConfig implements Serializable {
     public void setWhenCreated(Date whenCreated) {
         this.whenCreated = whenCreated;
     }
+
+    public Double[] getWeightsAsArray() {
+        Double[] wt = new Double[29];
+        for(int i = 0; i < 29; i++) {
+            String fieldName = "wt"+String.format("%02d", i+1) + "Coeff";
+            try {
+                Field field = this.getClass().getDeclaredField(fieldName);
+                wt[i] = (Double) field.get(this);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                LogFactory.getLog(this.getClass()).error("Unable to set value", e);
+            }
+        }
+        return wt;
+    }
 }

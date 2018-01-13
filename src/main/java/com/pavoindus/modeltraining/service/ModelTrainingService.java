@@ -17,4 +17,5 @@ public interface ModelTrainingService {
     List<TrainingDataInfo> getAllTrainingDataInfo();
     List<Model> getAllModels();
     List<TrainingData> getTrainingDataForInfo(Long id);
+    void queueModelForTraining(ModelConfig config);
 }

@@ -69,6 +69,15 @@ public class ApplicationController {
         return new Success(config);
     }
 
+    @PostMapping("/model/{id}/train")
+    public @ResponseBody APIResponse trainModel(@PathVariable("id") Long id) {
+        ModelConfig config = modelTrainingService.getModel(id);
+        if(config == null) {
+            return new Failure("No model exists with ID: " + id);
+        }
+        modelTrainingService.queueModelForTraining(config);
+        return new Success();
+    }
     @GetMapping("/train")
     public @ResponseBody APIResponse getAllTrainingDataInfo() {
         return new Success(modelTrainingService.getAllTrainingDataInfo());
