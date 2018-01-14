@@ -16,12 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -38,7 +33,7 @@ public class ApplicationController {
 
     @PostMapping("/train/upload")
     public @ResponseBody
-    APIResponse processTrainingDataUpload(@ModelAttribute TrainingDataForm trainingDataForm) {
+    APIResponse processTrainingDataUpload(@RequestBody TrainingDataForm trainingDataForm) {
         MultipartFile file = trainingDataForm.getFile();
         if (!file.getOriginalFilename().endsWith(".csv") && !file.getOriginalFilename()
                 .endsWith(".txt")) {
@@ -93,7 +88,7 @@ public class ApplicationController {
     }
 
     @PostMapping("/model/create")
-    public @ResponseBody APIResponse createNewModelAndConfig(@ModelAttribute ModelForm form) {
+    public @ResponseBody APIResponse createNewModelAndConfig(@RequestBody ModelForm form) {
         ModelConfig config = modelTrainingService.createModel(form.getTrainingDataInfoId(), form.getName(), form.getType(), form.getWtArray());
         if(config == null) {
             return new Failure("Something went wrong while creating model");
