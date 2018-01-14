@@ -33,7 +33,7 @@ public class ApplicationController {
 
     @PostMapping("/train/upload")
     public @ResponseBody
-    APIResponse processTrainingDataUpload(@RequestBody TrainingDataForm trainingDataForm) {
+    APIResponse processTrainingDataUpload(@ModelAttribute TrainingDataForm trainingDataForm) {
         MultipartFile file = trainingDataForm.getFile();
         if (!file.getOriginalFilename().endsWith(".csv") && !file.getOriginalFilename()
                 .endsWith(".txt")) {

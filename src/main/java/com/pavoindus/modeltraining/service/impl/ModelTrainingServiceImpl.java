@@ -7,10 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-import com.pavoindus.modeltraining.model.Model;
-import com.pavoindus.modeltraining.model.ModelConfig;
-import com.pavoindus.modeltraining.model.TrainingData;
-import com.pavoindus.modeltraining.model.TrainingDataInfo;
+import com.pavoindus.modeltraining.APIRequestFilter;
+import com.pavoindus.modeltraining.autoconfigue.PredictiveProperties;
+import com.pavoindus.modeltraining.model.*;
 import com.pavoindus.modeltraining.repository.ModelConfigRepository;
 import com.pavoindus.modeltraining.repository.ModelRepository;
 import com.pavoindus.modeltraining.repository.TrainingDataInfoRepository;
@@ -36,6 +35,9 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
     private static final Log logger = LogFactory.getLog(ModelTrainingServiceImpl.class);
     @Autowired
     private ModelRepository modelRepository;
+
+    @Autowired
+    private PredictiveProperties predictiveProperties;
 
     @Autowired
     private Producer producer;
@@ -127,11 +129,18 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
         for(TrainingData data : trainingData) {
             processedTrainingData.add(data.getMultipliedData(config.getWeightsAsArray()));
         }
-        Object[] processedData = 
-        processedTrainingData.toArray();
+        Collections.shuffle(processedTrainingData);
+        int _80index = (processedTrainingData.size() * 80) / 100;
+        Object[] processedData = processedTrainingData.toArray();
+        PredictiveConsumes consumes = new PredictiveConsumes(predictiveProperties.getApiKeyHeader(),
+                predictiveProperties.getApiKey(), APIRequestFilter.APPLICATION_NAME_HEADER,
+                APIRequestFilter.SERVICE_NAME, config.getModel().getName(),
+                config.getModel().getType().toString(), config.getModel().getId(), true,
+                processedTrainingData.subList(0, _80index).toArray(),
+                processedTrainingData.subList(_80index, processedTrainingData.size()).toArray());
         String data = null;
         try {
-            data = new ObjectMapper().writeValueAsString(processedData);
+            data = new ObjectMapper().writeValueAsString(consumes);
         } catch (IOException e) {
             logger.error(e);
         }

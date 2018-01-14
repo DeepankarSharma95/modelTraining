@@ -28,7 +28,7 @@ public class HttpUtil {
         return instance;
     }
 
-    public String call(String uri, Map<String, String> params, Map<String, String> headers, String method) {
+    public String call(String uri, String params, Map<String, String> headers, String method) {
         StringBuilder response = new StringBuilder();
         try {
             URL url = new URL(uri);
@@ -36,13 +36,13 @@ public class HttpUtil {
             connection.setRequestMethod(method);
             connection.setDoOutput(true);
             StringBuilder sj = new StringBuilder();
-            for (Map.Entry<String, String> entry : params.entrySet()) {
+            /*for (Map.Entry<String, String> entry : params.entrySet()) {
                 sj.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                 sj.append("=");
                 sj.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
                 sj.append("&");
-            }
-            byte[] out = sj.toString().getBytes();
+            }*/
+            byte[] out = params.getBytes();
 
             connection.setFixedLengthStreamingMode(out.length);
             for (Map.Entry<String, String> entry : headers.entrySet()) {

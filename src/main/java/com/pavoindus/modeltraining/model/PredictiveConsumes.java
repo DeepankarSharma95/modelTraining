@@ -5,11 +5,11 @@ import java.io.Serializable;
 public class PredictiveConsumes implements Serializable {
 
     private ApplicationHeader headers;
-    private Object data;
+    private Consumes data;
 
-    public PredictiveConsumes(String apiKeyHeader, String apiKey, String applicationNameHeader, String applicationName, Object data) {
+    public PredictiveConsumes(String apiKeyHeader, String apiKey, String applicationNameHeader, String applicationName, String modelName, String modelType, Long modelId, boolean exportFlag, Object[] trainingData, Object[] testData) {
         this.headers = new ApplicationHeader(apiKeyHeader, apiKey, applicationNameHeader, applicationName);
-        this.data = data;
+        this.data = new Consumes(modelName, modelType, exportFlag, trainingData, testData, modelId);
     }
 
     public ApplicationHeader getHeaders() {
@@ -20,11 +20,77 @@ public class PredictiveConsumes implements Serializable {
         this.headers = headers;
     }
 
-    public Object getData() {
+    public Consumes getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(Consumes data) {
         this.data = data;
+    }
+}
+
+class Consumes {
+    private String modelName;
+    private String modelType;
+    private boolean exportFlag;
+    private Object[] trainingData;
+    private Object[] testData;
+    private Long modelId;
+
+    public Consumes(String modelName, String modelType, boolean exportFlag, Object[] trainingData, Object[] testData, Long modelId) {
+        this.modelName = modelName;
+        this.modelType = modelType;
+        this.exportFlag = exportFlag;
+        this.trainingData = trainingData;
+        this.testData = testData;
+        this.modelId = modelId;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getModelType() {
+        return modelType;
+    }
+
+    public void setModelType(String modelType) {
+        this.modelType = modelType;
+    }
+
+    public boolean isExportFlag() {
+        return exportFlag;
+    }
+
+    public void setExportFlag(boolean exportFlag) {
+        this.exportFlag = exportFlag;
+    }
+
+    public Object[] getTrainingData() {
+        return trainingData;
+    }
+
+    public void setTrainingData(Object[] trainingData) {
+        this.trainingData = trainingData;
+    }
+
+    public Object[] getTestData() {
+        return testData;
+    }
+
+    public void setTestData(Object[] testData) {
+        this.testData = testData;
+    }
+
+    public Long getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(Long modelId) {
+        this.modelId = modelId;
     }
 }
