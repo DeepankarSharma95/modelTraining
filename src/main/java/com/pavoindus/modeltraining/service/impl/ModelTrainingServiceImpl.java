@@ -124,27 +124,8 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
 
     @Override
     public void queueModelForTraining(ModelConfig config) {
-        List<TrainingData> trainingData = trainingDataRepository.findByTrainingDataInfo(config.getModel().getTrainingDataInfo());
-        List<Double[]> processedTrainingData = new ArrayList<>();
-        for(TrainingData data : trainingData) {
-            processedTrainingData.add(data.getMultipliedData(config.getWeightsAsArray()));
-        }
-        Collections.shuffle(processedTrainingData);
-        int _80index = (processedTrainingData.size() * 80) / 100;
-        Object[] processedData = processedTrainingData.toArray();
-        PredictiveConsumes consumes = new PredictiveConsumes(predictiveProperties.getApiKeyHeader(),
-                predictiveProperties.getApiKey(), APIRequestFilter.APPLICATION_NAME_HEADER,
-                APIRequestFilter.SERVICE_NAME, config.getModel().getName(),
-                config.getModel().getType().toString(), config.getModel().getId(), true,
-                processedTrainingData.subList(0, _80index).toArray(),
-                processedTrainingData.subList(_80index, processedTrainingData.size()).toArray());
-        String data = null;
-        try {
-            data = new ObjectMapper().writeValueAsString(consumes);
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        producer.queueData(data);
+        int runnerPriority = Thread.currentThread().getPriority();
+        new Thread(() -> queueDataOnSecondaryThread(config, runnerPriority)).start();
     }
 
     private void processFile(String fileAbsPath, TrainingDataInfo info, int mainThreadPriority) {
@@ -210,5 +191,38 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
             logger.error("Failed to upload data... Records ID: " + info.getId() );
         }
         trainingDataInfoRepository.save(info);
+    }
+
+    private void queueDataOnSecondaryThread(ModelConfig config, int mainThreadPriority) {
+        logger.info("Inside processFile");
+        int newPriority = mainThreadPriority - 1 > Thread.MIN_PRIORITY ? mainThreadPriority - 1 : Thread.MIN_PRIORITY;
+        Thread.currentThread().setPriority(newPriority);
+        Thread.yield();
+        try {
+            Thread.sleep(3000L);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+        List<TrainingData> trainingData = trainingDataRepository.findByTrainingDataInfo(config.getModel().getTrainingDataInfo());
+        List<Double[]> processedTrainingData = new ArrayList<>();
+        for(TrainingData data : trainingData) {
+            processedTrainingData.add(data.getMultipliedData(config.getWeightsAsArray()));
+        }
+        Collections.shuffle(processedTrainingData);
+        int _80index = (processedTrainingData.size() * 80) / 100;
+        Object[] processedData = processedTrainingData.toArray();
+        PredictiveConsumes consumes = new PredictiveConsumes(predictiveProperties.getApiKeyHeader(),
+                predictiveProperties.getApiKey(), APIRequestFilter.APPLICATION_NAME_HEADER,
+                APIRequestFilter.SERVICE_NAME, config.getModel().getName(),
+                config.getModel().getType().toString(), config.getModel().getId(), true,
+                processedTrainingData.subList(0, _80index).toArray(),
+                processedTrainingData.subList(_80index, processedTrainingData.size()).toArray());
+        String data = null;
+        try {
+            data = new ObjectMapper().writeValueAsString(consumes);
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        producer.queueData(data);
     }
 }
