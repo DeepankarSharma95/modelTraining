@@ -1,8 +1,7 @@
 package com.pavoindus.modeltraining.controller;
 
-import com.pavoindus.modeltraining.autoconfigue.AuthenticationProperties;
-import com.pavoindus.modeltraining.autoconfigue.PredictiveProperties;
 import com.pavoindus.modeltraining.form.ModelForm;
+import com.pavoindus.modeltraining.form.PredictiveModelForm;
 import com.pavoindus.modeltraining.form.TrainingDataForm;
 import com.pavoindus.modeltraining.model.Model;
 import com.pavoindus.modeltraining.model.ModelConfig;
@@ -19,10 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class ApplicationController {
@@ -94,6 +90,11 @@ public class ApplicationController {
             return new Failure("Something went wrong while creating model");
         }
         return new Success(config);
+    }
+
+    @PostMapping("/model/analysis")
+    public @ResponseBody APIResponse getModelAnalysis(@ModelAttribute PredictiveModelForm form) {
+        return modelTrainingService.getModelAnalysisFromPredictiveService(form.getFile(), form.getModelId());
     }
 
 }

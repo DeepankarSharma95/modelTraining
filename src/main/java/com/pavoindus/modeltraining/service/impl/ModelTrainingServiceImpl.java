@@ -1,12 +1,5 @@
 package com.pavoindus.modeltraining.service.impl;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-
 import com.pavoindus.modeltraining.APIRequestFilter;
 import com.pavoindus.modeltraining.autoconfigue.PredictiveProperties;
 import com.pavoindus.modeltraining.model.*;
@@ -14,10 +7,12 @@ import com.pavoindus.modeltraining.repository.ModelConfigRepository;
 import com.pavoindus.modeltraining.repository.ModelRepository;
 import com.pavoindus.modeltraining.repository.TrainingDataInfoRepository;
 import com.pavoindus.modeltraining.repository.TrainingDataRepository;
+import com.pavoindus.modeltraining.response.APIResponse;
 import com.pavoindus.modeltraining.response.Failure;
+import com.pavoindus.modeltraining.response.Success;
 import com.pavoindus.modeltraining.service.ModelTrainingService;
-
 import com.pavoindus.modeltraining.service.Producer;
+import com.pavoindus.modeltraining.util.HttpUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -25,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.util.*;
 
 @Component
 @Service
@@ -128,6 +126,66 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
         new Thread(() -> queueDataOnSecondaryThread(config, runnerPriority)).start();
     }
 
+    @Override
+    public APIResponse getModelAnalysisFromPredictiveService(MultipartFile file, Long modelId) {
+        List<TrainingData> records = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean hasErrors = false;
+        String[][] data = null;
+        try {
+            String content = new String(file.getBytes());
+            String splitter = content.contains("\\r\\n") ? "\\r\\n" : "\\n";
+            String[] rows = content.split(splitter);
+            data = new String[rows.length][30];
+            int index = 1;
+            for(String row : rows) {
+                String[] columns = row.split(",");
+                logger.info("Processing row: " + index);
+                if(columns.length != 30) {
+                    logger.error("Row doesn't contain 30 cols. Rejecting: " + row);
+                    sb.append("Row doesn't contain 30 cols. Rejecting: ");
+                    sb.append(row);
+                    sb.append(", ");
+                    hasErrors = true;
+                }
+                data[index++] = columns;
+            }
+        } catch (IOException e) {
+            logger.error("Error reading file", e);
+            sb.append("Error reading file");
+            hasErrors = true;
+        }
+        if(hasErrors) {
+            return new Failure(sb.toString());
+        }
+        Model model = modelRepository.findOne(modelId);
+        if(model == null) {
+            return new Failure("Invalid model ID");
+        }
+        PredictiveAnalysis analysis = new PredictiveAnalysis(model.getFileLocation(), data);
+        try {
+            String params = new ObjectMapper().writeValueAsString(analysis);
+            Map<String, String> headers = new HashMap<>();
+            headers.put(predictiveProperties.getApiKeyHeader(), predictiveProperties.getApiKey());
+            headers.put(APIRequestFilter.APPLICATION_NAME_HEADER, APIRequestFilter.SERVICE_NAME);
+            headers.put(HttpUtil.CONTENT_TYPE, HttpUtil.CONTENT_TYPE_VALUE);
+            String response = HttpUtil.getInstance().call(predictiveProperties.getUrl() + "/" + predictiveProperties.getPredictUrl(), params, headers, HttpUtil.POST);
+            try {
+                return new ObjectMapper().readValue(response, Failure.class);
+            } catch (IOException e ) {
+                logger.info("No failure");
+            }
+            try {
+                return new ObjectMapper().readValue(response, Success.class);
+            } catch (IOException e) {
+                logger.error("Something went wrong");
+            }
+        } catch (IOException e) {
+            return new Failure("Something went wrong while sending request");
+        }
+        return new Failure("something went wrong");
+    }
+
     private void processFile(String fileAbsPath, TrainingDataInfo info, int mainThreadPriority) {
         logger.info("Inside processFile");
         int newPriority = mainThreadPriority - 1 > Thread.MIN_PRIORITY ? mainThreadPriority - 1 : Thread.MIN_PRIORITY;
@@ -139,7 +197,6 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
             logger.error(e);
         }
         List<TrainingData> records = new ArrayList<>();
-        List<String> fileLines;
         StringBuilder sb = new StringBuilder();
         int rowsProcessed = 0;
         boolean hasErrors = false;
@@ -162,7 +219,6 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
                     sb.append(row);
                     sb.append(", ");
                     hasErrors = true;
-                    break;
                 }
                 Double[] data = new Double[29];
                 for(int i = 0; i < 29; i++) {

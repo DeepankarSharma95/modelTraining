@@ -5,16 +5,18 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Map;
 
 public class HttpUtil {
 
     private static final Log logger = LogFactory.getLog(HttpUtil.class);
+
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_TYPE_VALUE = "application/json";
+    public static final String POST = "POST";
 
     private static HttpUtil instance;
 
@@ -28,6 +30,15 @@ public class HttpUtil {
         return instance;
     }
 
+    /**
+     * Sends a JSON request to the URI
+     *
+     * @param uri URI to which the call is being made
+     * @param params JSON body of the request
+     * @param headers Map of headers sent along with the request
+     * @param method Method of the Request. - POST
+     * @return JSON string returned from in response
+     */
     public String call(String uri, String params, Map<String, String> headers, String method) {
         StringBuilder response = new StringBuilder();
         try {

@@ -25,12 +25,10 @@ public class APIRequestFilter implements Filter {
 
     public static final String PAYROLL_RESULTS_API_KEY_HEADER = "X-Payroll-Results-API-Key";
     public static final String API_KEY_HEADER = "X-Payroll-Results-Model-Training-API-Key";
-    private static final String AUTH_TOKEN_HEADER = "X-Payroll-Results-Auth-Token";
     public static final String APPLICATION_NAME_HEADER = "X-Payroll-Results-Application";
     public static final String SERVICE_NAME = "Model Training Service";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String CONTENT_TYPE_VALUE = "application/json";
-    private static final String POST = "POST";
+
+    private static final String AUTH_TOKEN_HEADER = "X-Payroll-Results-Auth-Token";
     private static final String AUTH_TOKEN = "authToken";
 
     @Autowired
@@ -70,8 +68,8 @@ public class APIRequestFilter implements Filter {
             Map<String, String> headers = new HashMap<>();
             headers.put(authProperties.getApiKeyHeader(), authProperties.getApiKey());
             headers.put(APPLICATION_NAME_HEADER, SERVICE_NAME);
-            headers.put(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-            String response = HttpUtil.getInstance().call("http://" + authProperties.getUrl() + "/" + authProperties.getTokenValidationUrl(), new ObjectMapper().writeValueAsString(params), headers, POST);
+            headers.put(HttpUtil.CONTENT_TYPE, HttpUtil.CONTENT_TYPE_VALUE);
+            String response = HttpUtil.getInstance().call("http://" + authProperties.getUrl() + "/" + authProperties.getTokenValidationUrl(), new ObjectMapper().writeValueAsString(params), headers, HttpUtil.POST);
             if (response != null && !response.isEmpty()) {
                 HttpServiceResponse serviceResponse = new ObjectMapper().readValue(response, HttpServiceResponse.class);
                 if (serviceResponse != null && serviceResponse.getData() instanceof Map) {
