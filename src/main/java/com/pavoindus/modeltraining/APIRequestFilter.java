@@ -23,8 +23,8 @@ import java.util.Map;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class APIRequestFilter implements Filter {
 
-    private static final String PAYROLL_RESULTS_API_KEY_HEADER = "X-Payroll-Results-API-Key";
-    private static final String API_KEY_HEADER = "X-Payroll-Results-Model-Training-API-Key";
+    public static final String PAYROLL_RESULTS_API_KEY_HEADER = "X-Payroll-Results-API-Key";
+    public static final String API_KEY_HEADER = "X-Payroll-Results-Model-Training-API-Key";
     private static final String AUTH_TOKEN_HEADER = "X-Payroll-Results-Auth-Token";
     public static final String APPLICATION_NAME_HEADER = "X-Payroll-Results-Application";
     public static final String SERVICE_NAME = "Model Training Service";

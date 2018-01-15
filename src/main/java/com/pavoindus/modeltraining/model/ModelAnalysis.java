@@ -14,11 +14,13 @@ public class ModelAnalysis implements Serializable {
     }
 
     public ModelAnalysis(Model model) {
+        this.id = model.getId();
         this.model = model;
         this.whenCreated = new Date();
     }
 
     public ModelAnalysis(Model model, String truePositive, String falseNegative, String accuracy, String score, String location) {
+        this.id = model.getId();
         this.model = model;
         this.truePositive = truePositive;
         this.falseNegative = falseNegative;
@@ -39,6 +41,14 @@ public class ModelAnalysis implements Serializable {
     private String score;
     private String location;
     private Date whenCreated;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Model getModel() {
         return model;
