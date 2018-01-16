@@ -13,7 +13,7 @@ mvn clean install
 
 docker build . -t mtservice -f dockerFile
 
-docker run -p 8080:8080 -p 38787:38787 --name mtservice --link payrollresultsdb:mysql --restart unless-stopped -d mtservice
+docker run -p 8080:8080 -p 38787:38787 --name mtservice --link payrollresultsdb:mysql --link authservice:authservice --link rabbit-mq:rabbit-mq --restart unless-stopped -d mtservice
 
 == Stopping and Removing containers:
 
