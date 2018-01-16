@@ -137,7 +137,7 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
             String splitter = content.contains("\\r\\n") ? "\\r\\n" : "\\n";
             String[] rows = content.split(splitter);
             data = new String[rows.length][30];
-            int index = 1;
+            int index = 0;
             for(String row : rows) {
                 String[] columns = row.split(",");
                 logger.info("Processing row: " + index);
@@ -165,11 +165,13 @@ public class ModelTrainingServiceImpl implements ModelTrainingService {
         PredictiveAnalysis analysis = new PredictiveAnalysis(model.getFileLocation(), data);
         try {
             String params = new ObjectMapper().writeValueAsString(analysis);
+            logger.info("request body" + params);
             Map<String, String> headers = new HashMap<>();
             headers.put(predictiveProperties.getApiKeyHeader(), predictiveProperties.getApiKey());
             headers.put(APIRequestFilter.APPLICATION_NAME_HEADER, APIRequestFilter.SERVICE_NAME);
             headers.put(HttpUtil.CONTENT_TYPE, HttpUtil.CONTENT_TYPE_VALUE);
             String response = HttpUtil.getInstance().call(predictiveProperties.getUrl() + "/" + predictiveProperties.getPredictUrl(), params, headers, HttpUtil.POST);
+            logger.info("response: " + response);
             try {
                 return new ObjectMapper().readValue(response, Failure.class);
             } catch (IOException e ) {
