@@ -47,6 +47,8 @@ public class APIRequestFilter implements Filter {
         if (validateRequest(request)) {
             ApplicationContext.create();
             ApplicationContext.get().setApiKey(getApiKeyObject(request));
+            HttpServletResponse response = ((HttpServletResponse) servletResponse);
+            response.setHeader("Access-Control-Allow-Origin", "*");
             filterChain.doFilter(servletRequest, servletResponse);
             ApplicationContext.destroy();
             return;
